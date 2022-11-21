@@ -17,7 +17,8 @@
 }
 
 body {
-  background-image: url('https://thumbs.dreamstime.com/b/music-notes-symbols-seamless-pattern-design-fully-editable-fill-background-color-music-notes-symbols-seamless-pattern-118273669.jpg')
+  background: linear-gradient(-45deg, black, rgb(75, 75, 75));
+  background-size: 400% 400%;
 }
 
 #root {
@@ -54,8 +55,9 @@ body {
   border-radius: 10px;
 }
 #splash-screen {
-  background-image: url("https://www.gifcen.com/wp-content/uploads/2022/03/rickroll-gif-7.gif");
-  background-size: cover;
+  /* background-image: url("https://www.gifcen.com/wp-content/uploads/2022/03/rickroll-gif-7.gif"); */
+  background: linear-gradient(-45deg, lightgray, rgb(60, 60, 60));
+  background-size: 200% 200%;
   color: rgb(0, 0, 0);
   font-size: 10vw;
   border-color: black;
