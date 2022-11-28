@@ -105,7 +105,8 @@ export default function AppBanner() {
                         component="div"
                         sx={{ 
                             display: { xs: 'none', sm: 'block' },
-                            fontFamily: 'cursive'
+                            fontFamily: 'Brush Script MT',
+                            fontSize: 48
                              }}
                         style={{color: 'red'}}                  
                     >
