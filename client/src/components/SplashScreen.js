@@ -13,7 +13,7 @@ export default function SplashScreen() {
     }
     const text = {
         fontFamily: 'cursive',
-        fontSize: 24
+        fontSize: 24,
     }
 
     return (
