@@ -150,6 +150,46 @@ body {
   float: left;
 }
 
+#homescreen {
+  position: absolute;
+  width: 100%;
+  height: 90%;
+  display: grid;
+  grid-template-columns: 60% 40%;
+  grid-template-rows: 8% 80% auto;
+  
+}
+
+#homescreenHeader {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+#playlistContainer {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+#youtubePlayContainer {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+#homescreenFooter {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-size: 48pt;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 3;
+  grid-row-end: 4;
+}
+
 #list-selector-list {
   position: absolute;
   left: 0%;
