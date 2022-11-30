@@ -119,6 +119,7 @@ function ListCard(props) {
             />
     }
     return (
+        //if showSongs { render the song cards} else return cardElement
         cardElement
     );
 }

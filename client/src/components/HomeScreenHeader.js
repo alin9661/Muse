@@ -136,7 +136,7 @@ export default function HomeScreenHeader() {
                     size='large'
                     aria-controls="sortMenu"
                     onClick={handleSortOpen}
-                    alignItems="flex-end"
+                    sx={{alignSelf: "flex-end"}}
                 >
                     Sort By <SortIcon/>
                 </IconButton>

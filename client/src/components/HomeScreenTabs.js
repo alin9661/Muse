@@ -9,6 +9,7 @@ import FastRewindIcon from '@mui/icons-material/FastRewind';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
+import YouTube from 'react-youtube';
 
 export default function HomeScreenTabs() {
     const [value, setValue] = React.useState(0);
@@ -37,13 +38,12 @@ export default function HomeScreenTabs() {
 
         }
         return (
-            <Box>
+            <Box sx={{display: 'flex'}}>
                 <Card sx={{ display: 'flex'}}>
                     <Box sx={{ display: 'flex', flexDirection: 'row'}}>
-
+                        <YouTube/>
                     </Box>
                 </Card>
-                <script src='./components/YouTubePlaylister.js'></script>
             </Box>
         )
     }
@@ -83,7 +83,7 @@ export default function HomeScreenTabs() {
                 </Tab>
             </Tabs>
             <TabPanel value={value} index={0}>
-                Youtube
+                <youtubePlayer/>
             </TabPanel>
             <TabPanel value={value} index={1}>
                 Comments
