@@ -4,12 +4,14 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import List from '@mui/material/List';
-import Card from '@mui/material/Card';
+import IconButton from '@mui/material/IconButton';
 import FastRewindIcon from '@mui/icons-material/FastRewind';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import YouTube from 'react-youtube';
+import Typography from '@mui/material/Typography';
+import { minHeight } from '@mui/system';
 
 export default function HomeScreenTabs() {
     const [value, setValue] = React.useState(0);
@@ -27,43 +29,86 @@ export default function HomeScreenTabs() {
         )
     }
 
-    function youtubePlayer() {
-        let mediaCard = {
+    function YoutubePlayer() {
+        const boxFX = {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'stretch',
+            alignContent: 'flex-end',
+            maxHeight: '100px'
+        }
+
+        const textFX = {
+            fontWeight: 'bold',
+            p: '1'
+        }
+
+        function handlePrevious() {
 
         }
-        let controls = {
-            justifyItems: 'center',
-            borderRadius: 10,
-            backgroundColor: 'white'
+
+        function handleSkip() {
 
         }
+
+        function handlePause() {
+
+        }
+
+        function handlePlay() {
+
+        }
+
         return (
-            <Box sx={{display: 'flex'}}>
-                <Card sx={{ display: 'flex'}}>
-                    <Box sx={{ display: 'flex', flexDirection: 'row'}}>
-                        <YouTube/>
+            <Box sx={boxFX}>
+                <div className='youtubeWrapper'>
+                    <YouTube videoId='zLYIvO4EZJ4' id='youtubePlayer'/>
+                </div>
+                <Box id='mediaCard'>
+                    <Typography sx={{textAlign: 'center', fontWeight: 'bold'}} variant='h6'>
+                        Now Playing
+                    </Typography>
+                    <Typography variant='subtitle1' sx={{ marginLeft: 4, fontWeight: 'bold' }}>
+                        Playlist: 
+                    </Typography>
+                    <Typography variant='subtitle1' sx={{ marginLeft: 4, fontWeight: 'bold' }}>
+                        Song #: 
+                    </Typography>
+                    <Typography variant='subtitle1' sx={{ marginLeft: 4, fontWeight: 'bold' }}>
+                        Title: 
+                    </Typography>
+                    <Typography variant='subtitle1' sx={{ marginLeft: 4, fontWeight: 'bold' }}>
+                        Artist: 
+                    </Typography>
+                    <Box id='mediaControls' sx={{marginLeft: 'auto', marginRight: 'auto'}}>
+                        <IconButton onClick={handlePrevious}>
+                            <FastRewindIcon id='iconSize'/>
+                        </IconButton>
+                        <IconButton onClick={handlePause}>
+                            <StopIcon id='iconSize'/>
+                        </IconButton>
+                        <IconButton onClick={handlePlay}>
+                            <PlayArrowIcon id='iconSize'/>
+                        </IconButton>
+                        <IconButton onClick={handleSkip}>
+                            <FastForwardIcon id='iconSize'/>
+                        </IconButton>
                     </Box>
-                </Card>
+                </Box>
             </Box>
         )
     }
 
     function Comments() {
-        const boxFX = {
-            display: 'flex',
-            flexDirection: 'column',
-            bgcolor:"lightblue",
-            alignItems: 'stretch',
-            alignContent: 'flex-end'
-        }
         const comments = {
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'scroll'
+            overflow: 'auto',
+            minHeight: '510px'
         }
 
         return (
-            <Box sx={boxFX}>
+            <Box id='commentsContainer'>
                 <List sx={comments}>
 
                 </List>
@@ -83,10 +128,9 @@ export default function HomeScreenTabs() {
                 </Tab>
             </Tabs>
             <TabPanel value={value} index={0}>
-                <youtubePlayer/>
+                <YoutubePlayer/>
             </TabPanel>
             <TabPanel value={value} index={1}>
-                Comments
                 <Comments/>
             </TabPanel>
         </Box>

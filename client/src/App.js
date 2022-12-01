@@ -33,8 +33,14 @@ const App = () => {
                         <Route path="/login/" exact component={LoginScreen} />
                         <Route path="/register/" exact component={RegisterScreen} />
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} />
+                        {/* Home search */}
+                        <Route path="" exact/>
+                        {/* All playlist search */}
+                        <Route path="" exact/>
+                        {/* User search */}
+                        <Route path="" exact/>
                     </Switch>
-                    <Statusbar />
+                    {/* <Statusbar /> */}
                 </GlobalStoreContextProvider>
             </AuthContextProvider>
         </BrowserRouter>

@@ -1,11 +1,19 @@
 import { useContext, useState } from 'react'
 import { GlobalStoreContext } from '../store'
 import Box from '@mui/material/Box';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
+import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import Grid from '@mui/material/Grid';
+import SongCard from './SongCard.js'
+import Typography from '@mui/material/Typography';
+
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -18,6 +26,9 @@ function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [editActive, setEditActive] = useState(false);
     const [text, setText] = useState("");
+    const [listOpen, setListOpen] = useState(false);
+    const [listCounter, setListCounter] = useState(0);
+    const [isPublished, setIsPublished] = useState(false);
     const { idNamePair, selected } = props;
 
     function handleLoadList(event, id) {
@@ -32,6 +43,18 @@ function ListCard(props) {
             // CHANGE THE CURRENT LIST
             store.setCurrentList(id);
         }
+    }
+
+    async function handleLoadSongs(event) {
+        if (!listOpen) {
+            // await handleLoadList(event, idNamePair._id)
+            setListOpen(!listOpen);
+            // Open list
+        } else {
+            setListOpen(!listOpen);
+        }
+        // Close list
+        console.log(listOpen)
     }
 
     function handleToggleEdit(event) {
@@ -65,6 +88,28 @@ function ListCard(props) {
         setText(event.target.value);
     }
 
+    function handleLike(event) {
+
+    }
+
+    function handleDislike() {
+
+    }
+
+    const FancyButton = styled(Button)({
+        backgroundColor: 'lightgrey',
+        borderColor: 'black',
+        borderStyle: 'solid',
+        borderWidth: '1px',
+        borderRadius: '18px',
+        color: 'black',
+        fontWeight: 'bold',
+        fontSize: '12pt',
+        '&hover': {
+            backgroundColor: 'rgb(100,100,100)'
+        },
+    });
+
     let selectClass = "unselected-list-card";
     if (selected) {
         selectClass = "selected-list-card";
@@ -78,14 +123,70 @@ function ListCard(props) {
             id={idNamePair._id}
             key={idNamePair._id}
             sx={{borderRadius:"25px", p: "10px", bgcolor: '#8000F00F', marginTop: '15px', display: 'flex', p: 1 }}
-            style={{transform:"translate(1%,0%)", width: '98%', fontSize: '48pt' }}
-            button
+            style={{transform:"translate(1%,0%)", width: '98%', fontSize: '48pt'}}
+            // button
             onClick={(event) => {
-                handleLoadList(event, idNamePair._id)
+                // handleLoadList(event, idNamePair._id)
             }}
         >
-            <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
-            <Box sx={{ p: 1 }}>
+            <Grid container direction="column">
+                <Grid item>
+                    {/* <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box> */}
+                    <Typography variant='h3' sx={{ p: 1, flexGrow: 1, fontWeight: 'bold' }} >{idNamePair.name}</Typography>
+                    { isPublished && <Box sx={{ transform: 'translate(-30%,-110%)',float: 'right'}}>
+                        <IconButton>
+                            <ThumbUpOffAltIcon/>
+                        </IconButton>
+                        <IconButton>
+                            <ThumbDownOffAltIcon/>
+                        </IconButton>
+                    </Box> }
+                    <Typography variant='subtitle1' sx={{ p: 1}}> By: {} </Typography>
+                </Grid>
+                { listOpen && <Grid item>
+                        <Box id='listContentsBox'>
+                            stuff
+                        </Box>
+                        { !isPublished && <Grid sx={{float: 'left'}}>
+                            <FancyButton
+                            >
+                                Add
+                            </FancyButton>
+                            <FancyButton>
+                                Undo
+                            </FancyButton>
+                            <FancyButton>
+                                Redo
+                            </FancyButton>
+                        </Grid> }
+                        <Grid sx={{float: 'right'}} columnSpacing={2}>
+                            { !isPublished && <FancyButton
+                             >
+                                Publish
+                            </FancyButton> }
+                            <FancyButton
+                             onClick={(event) => {handleDeleteList(event, idNamePair._id)}}
+                            >
+                                Delete
+                            </FancyButton>
+                            <FancyButton>
+                                Duplicate
+                            </FancyButton>
+                        </Grid>
+                    </Grid>
+                }
+                <Grid item>
+                    <IconButton sx={{float: 'right'}} onClick={handleLoadSongs}>
+                        { listOpen ?
+                        <KeyboardDoubleArrowUpIcon sx={{transform: "translate(0%,0%)", fontSize: '32pt',}} /> :
+                        <KeyboardDoubleArrowDownIcon sx={{transform: "translate(0%,0%)", fontSize: '32pt',}} />
+                        }
+                    </IconButton>
+                    <Box>
+                    </Box>
+                </Grid>
+            </Grid>
+            {/* <Box sx={{ p: 1 }}>
                 <IconButton onClick={handleToggleEdit} aria-label='edit'>
                     <EditIcon style={{fontSize:'48pt'}} />
                 </IconButton>
@@ -96,7 +197,23 @@ function ListCard(props) {
                     }} aria-label='delete'>
                     <DeleteIcon style={{fontSize:'48pt'}} />
                 </IconButton>
+            </Box> */}
+            {/* Inner contents */}
+            {/* { listOpen &&
+            <Box>
+                {
+                store.currentList.songs.map((song, index) => (
+                    <SongCard
+                        id={'playlist-song-' + (index)}
+                        key={'playlist-song-' + (index)}
+                        index={index}
+                        song={song}
+                    />
+                ))  
+                }
+                dafd
             </Box>
+            } */}
         </ListItem>
 
     if (editActive) {

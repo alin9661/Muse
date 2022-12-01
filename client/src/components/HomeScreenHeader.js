@@ -60,9 +60,9 @@ export default function HomeScreenHeader() {
           transition: theme.transitions.create('width'),
           width: '100%',
           [theme.breakpoints.up('sm')]: {
-            width: '12ch',
+            width: '120ch',
             '&:focus': {
-              width: '20ch',
+              width: '120ch',
             },
           },
         },
@@ -110,17 +110,17 @@ export default function HomeScreenHeader() {
             <Toolbar sx={{justifyContent: "flex-start"}}>
                 <Tooltip title='Home'>
                     <IconButton size='large' onClick={handleHome}>
-                            <HomeIcon/>
+                            <HomeIcon id='iconSize'/>
                     </IconButton>
                 </Tooltip>
                 <Tooltip title='All Playlists'>
                     <IconButton size='large' onClick={handleAllPlaylists}>
-                        <GroupsIcon/>
+                        <GroupsIcon id='iconSize'/>
                     </IconButton>
                 </Tooltip>
                 <Tooltip title='User Playlist'>
                     <IconButton size='large' onClick={handleUsers}>
-                        <PersonIcon/>
+                        <PersonIcon id='iconSize'/>
                     </IconButton>
                 </Tooltip>
                 <Search>
@@ -132,13 +132,12 @@ export default function HomeScreenHeader() {
                     inputProps={{ 'aria-label': 'search' }}
                     />
                 </Search>
-                <IconButton 
-                    size='large'
+                  <IconButton 
                     aria-controls="sortMenu"
                     onClick={handleSortOpen}
-                    sx={{alignSelf: "flex-end"}}
-                >
-                    Sort By <SortIcon/>
+                    sx={{fontWeight: 'bold'}}
+                  >
+                    Sort By <SortIcon id='iconSize'/>
                 </IconButton>
                 <Menu
                     id="sortMenu"
