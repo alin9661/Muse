@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { GlobalStoreContext } from '../store'
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 function SongCard(props) {
     const { store } = useContext(GlobalStoreContext);
@@ -37,8 +39,18 @@ function SongCard(props) {
     function handleRemoveSong(event) {
         store.showRemoveSongModal(index, song);
     }
+
     function handleClick(event) {
-        // DOUBLE CLICK IS FOR SONG EDITING
+        event.stopPropagation();
+        if (event.detail === 1) {
+            console.log("One click")
+            console.log(store.currentList)
+            store.loadSong(song, index+1);
+        }
+    }
+
+    function handleEdit(event) {
+        event.stopPropagation();
         if (event.detail === 2) {
             console.log("double clicked");
             store.showEditSongModal(index, song);
@@ -47,7 +59,7 @@ function SongCard(props) {
 
     let cardClass = "list-card unselected-list-card";
     return (
-        <div
+        <Box
             key={index}
             id={'song-' + index + '-card'}
             className={cardClass}
@@ -58,21 +70,16 @@ function SongCard(props) {
             onDrop={handleDrop}
             draggable="true"
             onClick={handleClick}
+            onDoubleClick={handleEdit}
         >
-            {index + 1}.
-            <a
-                id={'song-' + index + '-link'}
-                className="song-link"
-                href={"https://www.youtube.com/watch?v=" + song.youTubeId}>
-                {song.title} by {song.artist}
-            </a>
+            <Typography sx={{fontSize: '20pt', fontWeight: 'bold'}} > {index + 1}. {song.title} by {song.artist} </Typography>
             <Button
-                sx={{transform:"translate(-5%, -5%)", width:"5px", height:"30px"}}
+                sx={{transform:"translate(-5%, -115%)", width:"5px", height:"30px"}}
                 variant="contained"
                 id={"remove-song-" + index}
                 className="list-card-button"
                 onClick={handleRemoveSong}>{"\u2715"}</Button>
-        </div>
+        </Box>
     );
 }
 

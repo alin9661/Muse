@@ -11,8 +11,6 @@ import MUIRemoveSongModal from './MUIRemoveSongModal'
 import RegisterScreen from './RegisterScreen'
 import SongCard from './SongCard'
 import SplashScreen from './SplashScreen'
-import Statusbar from './Statusbar'
-import WorkspaceScreen from './WorkspaceScreen'
 import HomeScreenHeader from './HomeScreenHeader'
 import HomeScreenFooter from './HomeScreenFooter'
 import HomeScreenTabs from './HomeScreenTabs'
@@ -36,8 +34,6 @@ export {
     SongCard,
     RegisterScreen,
     SplashScreen,
-    Statusbar, 
-    WorkspaceScreen,
     HomeScreenHeader,
     HomeScreenFooter,
     HomeScreenTabs,

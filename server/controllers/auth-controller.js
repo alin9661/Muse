@@ -131,6 +131,15 @@ registerUser = async (req, res) => {
                     errorMessage: "An account with this email address already exists."
                 })
         }
+        let emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if (!emailRegex.test(email)) {
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    errorMessage: "Please enter a valid email."
+                })
+        }
 
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
@@ -166,9 +175,40 @@ registerUser = async (req, res) => {
     }
 }
 
+createGuest = async (req, res) => {
+    let firstName = '0';
+    let lastName = '0';
+    let email = 'Guest';
+    let password = 'password'
+
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const passwordHash = await bcrypt.hash(password, salt);
+    console.log("passwordHash: " + passwordHash);
+
+    const newUser = new User({firstName, lastName, email, passwordHash});
+    const savedUser = await newUser.save();
+    const token = auth.signToken(savedUser._id);
+    console.log("token:" + token);
+
+    await res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none"
+    }).status(201).json({
+        success: true,
+        user: {
+            firstName: savedUser.firstName,
+            lastName: savedUser.lastName,  
+            email: savedUser.email              
+        }
+    })
+}
+
 module.exports = {
     getLoggedIn,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    createGuest
 }

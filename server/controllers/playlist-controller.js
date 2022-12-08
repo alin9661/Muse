@@ -8,7 +8,7 @@ const auth = require('../auth')
     
     @author McKilla Gorilla
 */
-createPlaylist = (req, res) => {
+createPlaylist = async (req, res) => {
     if(auth.verifyUser(req) === null){
         return res.status(400).json({
             errorMessage: 'UNAUTHORIZED'
@@ -23,7 +23,24 @@ createPlaylist = (req, res) => {
         })
     }
     
-    const playlist = new Playlist(body);
+    const name = new RegExp('Untitled'); // Helps mongodb read
+    let numOfOccurences = 0;
+    await Playlist.find( {ownerEmail: req.body.ownerEmail}, (err, playlists) => {
+        playlists.forEach((playlist) => {
+            if ( playlist.name.includes("Untitled") ) {
+                numOfOccurences++;
+            }
+        })
+    });
+
+    const playlistParams = {
+        name: 'Untitled ' + numOfOccurences,
+        songs: body.songs,
+        ownerEmail: body.ownerEmail
+    };
+
+
+    const playlist = new Playlist(playlistParams);
     console.log("playlist: " + playlist.toString());
     if (!playlist) {
         return res.status(400).json({ success: false, error: err })
@@ -187,7 +204,9 @@ updatePlaylist = async (req, res) => {
     }
     const body = req.body
     console.log("updatePlaylist: " + JSON.stringify(body));
-    console.log("req.body.name: " + req.body.name);
+    console.log("req.body.name: " + req.body.playlist.name);
+
+    console.log(req.body)
 
     if (!body) {
         return res.status(400).json({
@@ -243,11 +262,138 @@ updatePlaylist = async (req, res) => {
         asyncFindUser(playlist);
     })
 }
+
+getPlaylistName = async (req, res) => {
+    console.log("Inside getPlaylistName")
+    console.log(req.params)
+    await Playlist.find({name: req.params.name}, (err, playlistExists) => {
+        if (err) {
+            return res.status(400).json({
+                success: false,
+                error: 'You must provide a unique playlist name'
+            })
+        }
+        console.log(playlistExists)
+        if (playlistExists.length === 0) {
+            console.log("Success")
+            return res.status(200).json({
+                success: true
+            })
+        }
+        console.log('Not successful')
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a unique playlist name'
+        })
+    });
+}
+
+getHomeSearch = async (req, res) => {
+
+}
+
+getAllSearch = async (req, res) => {
+    console.log('------------------------------------------------------------')
+    console.log("All search")
+    await Playlist.find( {isPublished: true}, (err, playlists) => {
+        if (err) {
+            return res.status(400).json({
+                success: false,
+                error: 'Something went wrong.'
+            });
+        }
+        console.log("Successful search");
+        // PUT ALL THE LISTS INTO ID, NAME PAIRS
+        let pairs = [];
+        for (let key in playlists) {
+            let list = playlists[key];
+            let pair = {
+                _id: list._id,
+                name: list.name
+            };
+            pairs.push(pair);
+        }
+        console.log(playlists)
+        console.log(pairs)
+        return res.status(200).json({ success: true, idNamePairs: pairs })
+    })
+}
+
+getUserSearch = async (req, res) => {
+    console.log('------------------------------------------------------------')
+    console.log("User Search")
+}
+
+publishPlaylist = async (req, res) => {
+
+}
+
+duplicatePlaylist = async (req, res) => {
+    console.log('------------------------------------------------------------')
+    console.log("Duplicate")
+
+    await Playlist.findById( {_id: req.body.id}, (err, dupPlaylist) => {
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: 'Playlist not found!',
+            })
+        }
+
+        const playlistParams = {
+            name: dupPlaylist.name,
+            songs: dupPlaylist.songs,
+            ownerEmail: req.body.email
+        };
+    
+    
+        let newPlaylist = new Playlist(playlistParams);
+        console.log("playlist: " + newPlaylist.toString());
+        if (!newPlaylist) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        User.findOne({ email: req.body.email }, (err, user) => {
+            console.log("user found: " + JSON.stringify(user));
+            user.playlists.push(newPlaylist._id);
+            user
+                .save()
+                .then(() => {
+                    newPlaylist
+                        .save()
+                        .then(() => {
+                            return res.status(201).json({
+                                success: true,
+                                playlist: newPlaylist
+                            })
+                        })
+                        .catch(error => {
+                            return res.status(400).json({
+                                success: false,
+                                errorMessage: 'Playlist Not Created!'
+                            })
+                        })
+                });
+        })
+    })
+}
+
+sortPlaylist = async (req, res) => {
+    
+}
+
 module.exports = {
     createPlaylist,
     deletePlaylist,
     getPlaylistById,
     getPlaylistPairs,
     getPlaylists,
-    updatePlaylist
+    updatePlaylist,
+    getPlaylistName,
+    getHomeSearch,
+    getAllSearch,
+    getUserSearch,
+    publishPlaylist,
+    duplicatePlaylist,
+    sortPlaylist
 }

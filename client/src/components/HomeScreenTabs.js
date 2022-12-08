@@ -1,3 +1,5 @@
+import { useContext, useState, useEffect } from 'react'
+import GlobalStoreContext from '../store';
 import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -11,10 +13,10 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import YouTube from 'react-youtube';
 import Typography from '@mui/material/Typography';
-import { minHeight } from '@mui/system';
 
 export default function HomeScreenTabs() {
-    const [value, setValue] = React.useState(0);
+    const { store } = useContext(GlobalStoreContext);
+    const [value, setValue] = useState(0);
     const handleChange = (event, newValue) => {
         setValue(newValue);
     }
@@ -30,6 +32,13 @@ export default function HomeScreenTabs() {
     }
 
     function YoutubePlayer() {
+        const [isDisplay, setDisplay] = useState(false);
+
+        useEffect( () => {
+            console.log("YoutubePlayer effect");
+            (store.songDisplay !== null) ? setDisplay(true) : setDisplay(false)
+        }, [store.songDisplay])
+
         const boxFX = {
             display: 'flex',
             flexDirection: 'column',
@@ -56,29 +65,35 @@ export default function HomeScreenTabs() {
         }
 
         function handlePlay() {
-
+            
         }
 
         return (
             <Box sx={boxFX}>
-                <div className='youtubeWrapper'>
-                    <YouTube videoId='zLYIvO4EZJ4' id='youtubePlayer'/>
-                </div>
+                <Box className='youtubeBox'>
+                    { isDisplay ? 
+                        <YouTube
+                        videoId={store.songDisplay.song.youTubeId} 
+                        id='youtubeBox'
+                        /> :
+                        <Box className='emptyBox'></Box>
+                    }
+                </Box>
                 <Box id='mediaCard'>
                     <Typography sx={{textAlign: 'center', fontWeight: 'bold'}} variant='h6'>
                         Now Playing
                     </Typography>
                     <Typography variant='subtitle1' sx={{ marginLeft: 4, fontWeight: 'bold' }}>
-                        Playlist: 
+                        Playlist: { isDisplay ? store.currentList.name : ""}
                     </Typography>
                     <Typography variant='subtitle1' sx={{ marginLeft: 4, fontWeight: 'bold' }}>
-                        Song #: 
+                        Song #: { isDisplay ? store.songDisplay.index : "" }
                     </Typography>
                     <Typography variant='subtitle1' sx={{ marginLeft: 4, fontWeight: 'bold' }}>
-                        Title: 
+                        Title: { isDisplay ? store.songDisplay.song.title : "" }
                     </Typography>
                     <Typography variant='subtitle1' sx={{ marginLeft: 4, fontWeight: 'bold' }}>
-                        Artist: 
+                        Artist: { isDisplay ? store.songDisplay.song.artist : "" }
                     </Typography>
                     <Box id='mediaControls' sx={{marginLeft: 'auto', marginRight: 'auto'}}>
                         <IconButton onClick={handlePrevious}>

@@ -39,13 +39,30 @@ export const updatePlaylistById = (id, playlist) => {
         playlist : playlist
     })
 }
+export const getPlaylistName = (newName) => api.get(`/playlistName/${newName}`)
+export const getHomeSearch = () => api.get(`/searchHome`)
+export const getAllSearch = () => api.get(`/searchAll`)
+export const getUserSearch = () => api.get(`/searchUser`)
+export const publishPlaylist = () => {}
+export const duplicatePlaylist = (id, email) => api.post(`/duplicate`, {
+    id: id,
+    email: email
+})
+export const sortPlaylist = (sortType, ) => api.get(`/sortedList`)
 
 const apis = {
     createPlaylist,
     deletePlaylistById,
     getPlaylistById,
     getPlaylistPairs,
-    updatePlaylistById
+    updatePlaylistById,
+    getPlaylistName,
+    getHomeSearch,
+    getAllSearch,
+    getUserSearch,
+    publishPlaylist,
+    duplicatePlaylist,
+    sortPlaylist,
 }
 
 export default apis

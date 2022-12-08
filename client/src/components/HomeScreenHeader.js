@@ -1,157 +1,166 @@
 import { useContext, useState } from 'react';
+import AuthContext from '../auth'
+import { GlobalStoreContext } from '../store'
 
 import AppBar from '@mui/material/AppBar';
-import SearchIcon from "@mui/icons-material/Search";
 import IconButton from '@mui/material/IconButton';
 import GroupsIcon from '@mui/icons-material/Groups';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
-import { styled, alpha } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
+import { styled } from '@mui/material/styles';
 import { Toolbar } from '@mui/material';
 import SortIcon from '@mui/icons-material/Sort';
 import Tooltip from '@mui/material/Tooltip';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import TextField from "@mui/material/TextField";
+// import SearchBar from "material-ui-search-bar";
 
 export default function HomeScreenHeader() {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const isSortOpen = Boolean(anchorEl);
+const { auth } = useContext(AuthContext);
+const { store } = useContext(GlobalStoreContext);
+const [anchorEl, setAnchorEl] = useState(null);
+const [ search, setSearch ] = useState("");
+const isSortOpen = Boolean(anchorEl);
 
-    const handleSortOpen = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+const handleSortOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+};
 
-    const handleSortClose = () => {
-        setAnchorEl(null);
-    };
+const handleSortClose = () => {
+    setAnchorEl(null);
+};
 
-    const Search = styled('div')(({ theme }) => ({
-        position: 'relative',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: alpha(theme.palette.common.white, 0.15),
-        '&:hover': {
-          backgroundColor: alpha(theme.palette.common.white, 0.25),
-        },
-        marginLeft: 0,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-          marginLeft: theme.spacing(1),
-          width: 'auto',
-        },
-      }));
+const FancyText = styled(TextField)({
+  backgroundColor: 'lightgrey',
+  display: 'flex',
+  width: "100%",
+  minWidth: 500,
+})
 
-      const SearchIconWrapper = styled('div')(({ theme }) => ({
-        padding: theme.spacing(0, 2),
-        height: '100%',
-        position: 'absolute',
-        pointerEvents: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }));
+const SearchBar = () => (
+  <form>
+    <FancyText
+      id="search-bar"
+      className="text"
+      onChan={(e) => {
+        setSearch(e.target.value);
+      }}
+      onKeyDown={handleKeyPress}
+      label="Search"
+      placeholder="Search..."
+      size="small"
+    />
+  </form>
+);
 
-      const StyledInputBase = styled(InputBase)(({ theme }) => ({
-        color: 'inherit',
-        '& .MuiInputBase-input': {
-          padding: theme.spacing(1, 1, 1, 0),
-          // vertical padding + font size from searchIcon
-          paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-          transition: theme.transitions.create('width'),
-          width: '100%',
-          [theme.breakpoints.up('sm')]: {
-            width: '120ch',
-            '&:focus': {
-              width: '120ch',
-            },
-          },
-        },
-      }));
+function handleHome() {
+  store.getHomePlaylists();
+}
 
-      function handleHome() {
+function handleAllPlaylists() {
+  store.getAllPlaylists();
+}
 
-      }
+function handleUsers() {
+  store.getUserPlaylist();
+}
 
-      function handleAllPlaylists() {
+function handleKeyPress(e) {
+  if (e.keyCode === 13) {
+    // Person clicked Enter -> Search
+    console.log("Enter")
+  }
+}
 
-      }
 
-      function handleUsers() {
+function handleNameSort() {
+  store.sortPlaylist("Name");
+  handleSortClose();
+}
 
-      }
-      
-      function handleNameSort() {
-        handleSortClose();
+function handleDateSort() {
+  store.sortPlaylist("Date");
+  handleSortClose();
+}
 
-      }
+function handleListensSort() {
+  store.sortPlaylist("Listens");
+  handleSortClose();
 
-      function handleDateSort() {
-        handleSortClose();
+}
 
-      }
+function handleLikesSort() {
+  store.sortPlaylist("Likes");
+  handleSortClose();
+}
 
-      function handleListensSort() {
-        handleSortClose();
+function handleDislikesSort() {
+  store.sortPlaylist("Dislikes");
+  handleSortClose();
+}
 
-      }
+const isGuest = auth.getUserEmail() === 'Guest';
 
-      function handleLikesSort() {
-        handleSortClose();
-
-      }
-
-      function handleDislikesSort() {
-        handleSortClose();
-
-      }
-
-    return (
-        <AppBar position='sticky' id ="homescreenHeader">
-            <Toolbar sx={{justifyContent: "flex-start"}}>
-                <Tooltip title='Home'>
-                    <IconButton size='large' onClick={handleHome}>
+console.log("Header")
+  return (
+      <AppBar position='sticky' id ="homescreenHeader">
+          <Toolbar sx={{justifyContent: "flex-start"}}>
+            <Box display='flex' flexGrow={1} sx={{justifyContent: 'left'}}>
+              <Tooltip title='Home'>
+                    <IconButton size='large' onClick={handleHome} disabled={isGuest}>
                             <HomeIcon id='iconSize'/>
                     </IconButton>
                 </Tooltip>
                 <Tooltip title='All Playlists'>
-                    <IconButton size='large' onClick={handleAllPlaylists}>
-                        <GroupsIcon id='iconSize'/>
-                    </IconButton>
+                      <IconButton size='large' onClick={handleAllPlaylists}>
+                          <GroupsIcon id='iconSize'/>
+                      </IconButton>
+
                 </Tooltip>
                 <Tooltip title='User Playlist'>
                     <IconButton size='large' onClick={handleUsers}>
                         <PersonIcon id='iconSize'/>
                     </IconButton>
                 </Tooltip>
-                <Search>
+            </Box>
+            <Box display='flex' flexGrow={1} sx={{justifyContent: 'center'}}>
+              {/* <Search>
                     <SearchIconWrapper>
                     <SearchIcon />
                     </SearchIconWrapper>
                     <StyledInputBase
                     placeholder="Search…"
                     inputProps={{ 'aria-label': 'search' }}
+                    onKeyPress={handleKeyPress}
                     />
-                </Search>
-                  <IconButton 
+                </Search> */}
+                <SearchBar></SearchBar>
+            </Box>
+            <Box display='flex' flexGrow={1} sx={{justifyContent: 'right'}}>
+              <IconButton 
                     aria-controls="sortMenu"
                     onClick={handleSortOpen}
+                    className='sortButton'
                     sx={{fontWeight: 'bold'}}
                   >
                     Sort By <SortIcon id='iconSize'/>
                 </IconButton>
-                <Menu
-                    id="sortMenu"
-                    anchorEl={anchorEl}
-                    open={isSortOpen}
-                    onClose={handleSortClose}
-                >
-                    <MenuItem onClick={handleNameSort}>Name (A-Z)</MenuItem>
-                    <MenuItem onClick={handleDateSort}>Publish Date (Newest)</MenuItem>
-                    <MenuItem onClick={handleListensSort}>Listens (High - Low)</MenuItem>
-                    <MenuItem onClick={handleLikesSort}>Likes (High - Low)</MenuItem>
-                    <MenuItem onClick={handleDislikesSort}>Dislikes (High - Low)</MenuItem>
-                </Menu>
-            </Toolbar>
-        </AppBar>
-    )
+            </Box>
+              <Menu
+                  id="sortMenu"
+                  anchorEl={anchorEl}
+                  open={isSortOpen}
+                  onClose={handleSortClose}
+              >
+                  <MenuItem onClick={handleNameSort}>Name (A-Z)</MenuItem>
+                  <MenuItem onClick={handleDateSort}>Publish Date (Newest)</MenuItem>
+                  <MenuItem onClick={handleListensSort}>Listens (High - Low)</MenuItem>
+                  <MenuItem onClick={handleLikesSort}>Likes (High - Low)</MenuItem>
+                  <MenuItem onClick={handleDislikesSort}>Dislikes (High - Low)</MenuItem>
+              </Menu>
+          </Toolbar>
+      </AppBar>
+  )
 }

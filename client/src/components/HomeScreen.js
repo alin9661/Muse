@@ -6,9 +6,7 @@ import HomeScreenHeader from './HomeScreenHeader'
 import HomeScreenTabs from './HomeScreenTabs'
 import HomeScreenFooter from './HomeScreenFooter'
 
-import AddIcon from '@mui/icons-material/Add';
-import Fab from '@mui/material/Fab'
-import List from '@mui/material/List';
+import List from '@mui/material/List';                                                                                                                                                                                                                                                                                                                                          
 import Box from '@mui/material/Box'
 
 
@@ -24,11 +22,8 @@ const HomeScreen = () => {
         store.loadIdNamePairs();
     }, []);
 
-    function handleCreateNewList() {
-        store.createNewList();
-    }
     let listCard = "";
-    if (store) {
+    if (store.idNamePairs) {
         listCard = 
             <List id='playlistContainer' sx={{width: '100%',
              bgcolor: 'background.paper', overflow: 'auto' }}>
@@ -45,19 +40,9 @@ const HomeScreen = () => {
             </List>;
     }
 
+    console.log("Homescreen")
     return (
         <div id="playlist-selector">
-            {/* <div id="list-selector-heading">
-            <Fab sx={{transform:"translate(-20%, 0%)"}}
-                color="primary" 
-                aria-label="add"
-                id="add-list-button"
-                onClick={handleCreateNewList}
-            >
-                <AddIcon />
-            </Fab>
-                Your Playlists
-            </div> */}
             <Box sx={{bgcolor:"silver"}} id="homescreen">
                 <HomeScreenHeader />
                 <HomeScreenTabs />

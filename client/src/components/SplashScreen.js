@@ -1,3 +1,5 @@
+import { useContext } from 'react'
+import AuthContext from '../auth';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -5,6 +7,8 @@ import { Link } from 'react-router-dom'
 import Typography from '@mui/material/Typography';
 
 export default function SplashScreen() {
+    const { auth } = useContext(AuthContext);
+
     const title = {
         fontFamily: 'Brush Script MT',
         fontSize: 120,
@@ -15,6 +19,10 @@ export default function SplashScreen() {
         fontSize: 24,
         flexWrap: 'wrap',
         padding: 2
+    }
+
+    function handleGuest() {
+        auth.createGuest();
     }
 
     return (
@@ -38,7 +46,7 @@ export default function SplashScreen() {
                     <Button size="large" variant="contained"><Link to='/register/'>Create Account</Link></Button>
                 </Grid>
                 <Grid item>
-                    <Button size="large" variant="contained"><Link>Continue as Guest</Link></Button>
+                    <Button size="large" variant="contained"><Link onClick={handleGuest}>Continue as Guest</Link></Button>
                 </Grid>
             </Grid>
         </Box>

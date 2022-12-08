@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 
-const style1 = {
+const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
@@ -15,8 +15,9 @@ const style1 = {
     width: 345,
     height: 250,
     backgroundSize: "contain",
-    backgroundImage: `url(https://i.insider.com/602ee9ced3ad27001837f2ac?})`,
+    backgroundColor: 'lightblue',
     border: '3px solid #000',
+    borderRadius: '20px',
     padding: '20px',
     boxShadow: 24,
 };
@@ -44,17 +45,17 @@ export default function MUIRemoveSongModal() {
     return (
         <Modal
         open={store.currentModal === "REMOVE_SONG"}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
         >
-        <Box sx={style1}>
-            <Typography sx={{fontWeight: 'bold'}} id="modal-modal-title" variant="h4" component="h2">
+        <Box sx={style}>
+            <Typography sx={{fontWeight: 'bold'}} id="modal-title" variant="h4" component="h2">
                 Delete Song
             </Typography>
             <Divider sx={{borderBottomWidth: 5, p: '5px', transform: 'translate(-5.5%, 0%)', width:377}}/>
             <Box sx={{background: "rgb(172,79,198,0.05)"}}>
-            <Typography id="modal-modal-description" variant="h6" sx={{color: "#301974" ,fontWeight: 'bold', mt: 1}}>
-                Are you sure you want to remove the <Typography display="inline" id="modal-modal-description" variant="h6" sx={{color: "#820747CF" ,fontWeight: 'bold', mt: 2, textDecoration: 'underline'}}>{songTitle}</Typography> song?
+            <Typography id="modal-description" variant="h6" sx={{color: "#301974" ,fontWeight: 'bold', mt: 1}}>
+                Are you sure you want to remove the <Typography display="inline" id="modal-description" variant="h6" sx={{color: "#820747CF" ,fontWeight: 'bold', mt: 2, textDecoration: 'underline'}}>{songTitle}</Typography> song?
             </Typography>
             </Box>
             <Button sx={{opacity: 0.7, color: "#8932CC", backgroundColor: "#CBC3E3", fontSize: 13, fontWeight: 'bold', border: 2, p:"5px", mt:"60px", mr:"95px"}} variant="outlined" onClick={handleConfirmRemoveSong}> Confirm </Button>

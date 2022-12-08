@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { GlobalStoreContext } from '../store'
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -11,9 +11,12 @@ import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import Grid from '@mui/material/Grid';
-import SongCard from './SongCard.js'
 import Typography from '@mui/material/Typography';
-
+import AuthContext from '../auth'
+import { Link } from 'react-router-dom'
+import SongCard from './SongCard.js'
+import MUIEditSongModal from './MUIEditSongModal'
+import MUIRemoveSongModal from './MUIRemoveSongModal'
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -24,14 +27,29 @@ import Typography from '@mui/material/Typography';
 */
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const [editActive, setEditActive] = useState(false);
     const [text, setText] = useState("");
     const [listOpen, setListOpen] = useState(false);
     const [listCounter, setListCounter] = useState(0);
     const [isPublished, setIsPublished] = useState(false);
+    const [songList, setSongList] = useState([]);
     const { idNamePair, selected } = props;
 
+    useEffect(() => {
+        if (auth.loggedIn && store.currentList) {
+            if (store.currentList._id === idNamePair._id) {
+                setListOpen(!listOpen);
+                setSongList(store.currentList.songs);
+            } else {
+                setListOpen(false)
+            }
+        }
+    }, [store.currentList]); 
+
     function handleLoadList(event, id) {
+        event.stopPropagation();
+        event.preventDefault();
         console.log("handleLoadList for " + id);
         if (!event.target.disabled) {
             let _id = event.target.id;
@@ -45,20 +63,38 @@ function ListCard(props) {
         }
     }
 
-    async function handleLoadSongs(event) {
-        if (!listOpen) {
-            // await handleLoadList(event, idNamePair._id)
-            setListOpen(!listOpen);
-            // Open list
-        } else {
-            setListOpen(!listOpen);
-        }
-        // Close list
-        console.log(listOpen)
+    function handleAddNewSong(event) {
+        event.stopPropagation();
+        store.addNewSong();
+    }
+    function handleUndo(event) {
+        event.stopPropagation();
+        store.undo();
+    }
+    function handleRedo(event) {
+        event.stopPropagation();
+        store.redo();
+    }
+
+    function handleLike(event) {
+
+    }
+
+    function handleDislike() {
+
+    }
+
+    function handlePublish() {
+        store.publishPlaylist(idNamePair._id);
+    }
+
+    function handleDuplicate() {
+        store.duplicatePlaylist(idNamePair._id);
     }
 
     function handleToggleEdit(event) {
         event.stopPropagation();
+        event.preventDefault();
         toggleEdit();
     }
 
@@ -78,6 +114,7 @@ function ListCard(props) {
     }
 
     function handleKeyPress(event) {
+        event.stopPropagation();
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
             store.changeListName(id, text);
@@ -86,14 +123,6 @@ function ListCard(props) {
     }
     function handleUpdateText(event) {
         setText(event.target.value);
-    }
-
-    function handleLike(event) {
-
-    }
-
-    function handleDislike() {
-
     }
 
     const FancyButton = styled(Button)({
@@ -105,18 +134,18 @@ function ListCard(props) {
         color: 'black',
         fontWeight: 'bold',
         fontSize: '12pt',
+        margin: '8px',
         '&hover': {
             backgroundColor: 'rgb(100,100,100)'
         },
     });
 
-    let selectClass = "unselected-list-card";
-    if (selected) {
-        selectClass = "selected-list-card";
+    let modalJSX = "";
+    if (store.isEditSongModalOpen()) {
+        modalJSX = <MUIEditSongModal />;
     }
-    let cardStatus = false;
-    if (store.isListNameEditActive) {
-        cardStatus = true;
+    else if (store.isRemoveSongModalOpen()) {
+        modalJSX = <MUIRemoveSongModal />;
     }
     let cardElement =
         <ListItem
@@ -124,14 +153,11 @@ function ListCard(props) {
             key={idNamePair._id}
             sx={{borderRadius:"25px", p: "10px", bgcolor: '#8000F00F', marginTop: '15px', display: 'flex', p: 1 }}
             style={{transform:"translate(1%,0%)", width: '98%', fontSize: '48pt'}}
-            // button
-            onClick={(event) => {
-                // handleLoadList(event, idNamePair._id)
-            }}
+            button
+            onDoubleClick={handleToggleEdit}
         >
             <Grid container direction="column">
                 <Grid item>
-                    {/* <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box> */}
                     <Typography variant='h3' sx={{ p: 1, flexGrow: 1, fontWeight: 'bold' }} >{idNamePair.name}</Typography>
                     { isPublished && <Box sx={{ transform: 'translate(-30%,-110%)',float: 'right'}}>
                         <IconButton>
@@ -141,26 +167,36 @@ function ListCard(props) {
                             <ThumbDownOffAltIcon/>
                         </IconButton>
                     </Box> }
-                    <Typography variant='subtitle1' sx={{ p: 1}}> By: {} </Typography>
+                    <Typography variant='subtitle1' sx={{p: 1}}> By: <Link to=''>{auth.getUserName()}</Link></Typography>
                 </Grid>
                 { listOpen && <Grid item>
                         <Box id='listContentsBox'>
-                            stuff
+                            {
+                                songList.map((song, index) => (
+                                    <SongCard
+                                        id={'playlist-song-' + (index)}
+                                        key={'playlist-song-' + (index)}
+                                        index={index}
+                                        song={song}
+                                    />
+                                )) 
+                            }
+                            { modalJSX }
                         </Box>
                         { !isPublished && <Grid sx={{float: 'left'}}>
-                            <FancyButton
-                            >
+                            <FancyButton onClick={handleAddNewSong}>
                                 Add
                             </FancyButton>
-                            <FancyButton>
+                            <FancyButton onClick={handleUndo}>
                                 Undo
                             </FancyButton>
-                            <FancyButton>
+                            <FancyButton onClick={handleRedo}>
                                 Redo
                             </FancyButton>
                         </Grid> }
                         <Grid sx={{float: 'right'}} columnSpacing={2}>
                             { !isPublished && <FancyButton
+                                onClick={handlePublish}
                              >
                                 Publish
                             </FancyButton> }
@@ -169,14 +205,16 @@ function ListCard(props) {
                             >
                                 Delete
                             </FancyButton>
-                            <FancyButton>
+                            <FancyButton
+                                onClick={handleDuplicate}
+                            >
                                 Duplicate
                             </FancyButton>
                         </Grid>
                     </Grid>
                 }
                 <Grid item>
-                    <IconButton sx={{float: 'right'}} onClick={handleLoadSongs}>
+                    <IconButton sx={{float: 'right'}} onClick={(event) => {handleLoadList(event, idNamePair._id)}}>
                         { listOpen ?
                         <KeyboardDoubleArrowUpIcon sx={{transform: "translate(0%,0%)", fontSize: '32pt',}} /> :
                         <KeyboardDoubleArrowDownIcon sx={{transform: "translate(0%,0%)", fontSize: '32pt',}} />
@@ -186,34 +224,6 @@ function ListCard(props) {
                     </Box>
                 </Grid>
             </Grid>
-            {/* <Box sx={{ p: 1 }}>
-                <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                    <EditIcon style={{fontSize:'48pt'}} />
-                </IconButton>
-            </Box>
-            <Box sx={{ p: 1 }}>
-                <IconButton onClick={(event) => {
-                        handleDeleteList(event, idNamePair._id)
-                    }} aria-label='delete'>
-                    <DeleteIcon style={{fontSize:'48pt'}} />
-                </IconButton>
-            </Box> */}
-            {/* Inner contents */}
-            {/* { listOpen &&
-            <Box>
-                {
-                store.currentList.songs.map((song, index) => (
-                    <SongCard
-                        id={'playlist-song-' + (index)}
-                        key={'playlist-song-' + (index)}
-                        index={index}
-                        song={song}
-                    />
-                ))  
-                }
-                dafd
-            </Box>
-            } */}
         </ListItem>
 
     if (editActive) {

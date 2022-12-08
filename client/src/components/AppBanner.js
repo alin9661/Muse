@@ -82,9 +82,6 @@ export default function AppBanner() {
     let menu = loggedOutMenu;
     if (auth.loggedIn) {
         menu = loggedInMenu;
-        if (store.currentList) {
-            editToolbar = <EditToolbar />;
-        }
     }
 
     function stringToColor(string: string) {
@@ -120,6 +117,9 @@ export default function AppBanner() {
         let userInitials = auth.getUserInitials();
         console.log("userInitials: " + userInitials);
         let name = userInitials[0] + ' ' + userInitials[1]
+        let email = auth.getUserEmail();
+        if (email === 'Guest')
+                return <AccountCircle />;
         if (loggedIn) 
             return <Avatar {...stringAvatar(name)} />
         else

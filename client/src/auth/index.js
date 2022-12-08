@@ -1,6 +1,7 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
+import { GlobalStoreContext } from '../store'
 
 const AuthContext = createContext();
 console.log("create AuthContext: " + AuthContext);
@@ -10,7 +11,8 @@ export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
-    REGISTER_USER: "REGISTER_USER"
+    REGISTER_USER: "REGISTER_USER",
+    CREATE_GUEST: "CREATE_GUEST"
 }
 
 function AuthContextProvider(props) {
@@ -20,6 +22,7 @@ function AuthContextProvider(props) {
         errorMessage: null
     });
     const history = useHistory();
+    const { store } = useContext(GlobalStoreContext);
 
     useEffect(() => {
         auth.getLoggedIn();
@@ -56,6 +59,13 @@ function AuthContextProvider(props) {
                     errorMessage: payload.errorMessage
                 })
             }
+            case AuthActionType.CREATE_GUEST: {
+                return setAuth({
+                    user: payload.user,
+                    loggedIn: payload.loggedIn,
+                    errorMessage: null
+                })
+            }
             default:
                 return auth;
         }
@@ -84,14 +94,12 @@ function AuthContextProvider(props) {
                     type: AuthActionType.REGISTER_USER,
                     payload: {
                         user: response.data.user,
-                        loggedIn: true,
+                        loggedIn: false,
                         errorMessage: null
                     }
                 })
                 history.push("/login");
                 console.log("NOW WE LOGIN");
-                auth.loginUser(email, password);
-                console.log("LOGGED IN");
             }
         } catch(error){
             authReducer({
@@ -102,6 +110,25 @@ function AuthContextProvider(props) {
                     errorMessage: error.response.data.errorMessage
                 }
             })
+        }
+    }
+
+    auth.createGuest = async function () {
+        console.log('In create guest')
+        const response = await api.createGuest();
+        if (response.status === 201) {
+            console.log("Guest created successfully")
+            authReducer({
+                type: AuthActionType.CREATE_GUEST,
+                payload: {
+                    user: response.data.user,
+                    loggedIn: true,
+                    errorMessage: null
+                }
+            })
+            store.guestCreated();
+            console.log(auth.loggedIn)
+            history.push("/");
         }
     }
 
@@ -150,6 +177,18 @@ function AuthContextProvider(props) {
         }
         console.log("user initials: " + initials);
         return initials;
+    }
+
+    auth.getUserEmail = function() {
+        if (auth.user) {
+            return auth.user.email
+        }
+    }
+
+    auth.getUserName = function() {
+        if (auth.user) {
+            return auth.user.firstName + ' ' + auth.user.lastName
+        }
     }
 
     return (

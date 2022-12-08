@@ -7,16 +7,17 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 
-const style1 = {
+const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 345,
+    width: 360,
     height: 250,
     backgroundSize: "contain",
-    backgroundImage: `url(https://i.insider.com/602ee9ced3ad27001837f2ac?})`,
+    backgroundColor: 'lightblue',
     border: '3px solid #000',
+    borderRadius: '20px',
     padding: '20px',
     boxShadow: 24,
 };
@@ -54,15 +55,15 @@ export default function MUIEditSongModal() {
 
     return (
         <Modal
-            open={store.currentModal == "EDIT_SONG"}
+            open={store.currentModal === "EDIT_SONG"}
         >
-        <Box sx={style1}>
+        <Box sx={style}>
             <div id="edit-song-modal" data-animation="slideInOutLeft">
-            <Typography sx={{fontWeight: 'bold'}} id="modal-modal-title" variant="h4" component="h2">
+            <Typography sx={{fontWeight: 'bold'}} id="modal-title" variant="h4" component="h2">
                 Edit Song
             </Typography>
             <Divider sx={{borderBottomWidth: 5, p: '5px', transform: 'translate(-5.5%, 0%)', width:377}}/>
-            <Typography sx={{mt: "10px", color: "#702963", fontWeight:"bold", fontSize:"30px"}} id="modal-modal-title" variant="h6" component="h2">
+            <Typography sx={{mt: "10px", color: "#702963", fontWeight:"bold", fontSize:"30px"}} id="modal-title" variant="h6" component="h2">
                 Title: <input id="edit-song-modal-title-textfield" className='modal-textfield' type="text" defaultValue={title} onChange={handleUpdateTitle} />
             </Typography>
             <Typography sx={{color: "#702963", fontWeight:"bold", fontSize:"30px"}} id="modal-modal-artist" variant="h6" component="h2">
